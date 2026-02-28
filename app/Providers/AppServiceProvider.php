@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // load API routes if file exists
+        if (file_exists(base_path('routes/api.php'))) {
+            Route::prefix('api/v1/')->middleware('api')
+                 ->group(base_path('routes/api.php'));
+        }
     }
 }
