@@ -21,5 +21,8 @@ return [
         'permissions.view',
         'permissions.sync',
     ],
+    'logs' => [
+        'logs.view',
+    ],
 
 ];

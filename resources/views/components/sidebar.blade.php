@@ -309,6 +309,34 @@
                     </li>
                 @endcanany
 
+                {{-- LOGS --}}
+                @canany(['logs.view'])
+                    <li class="nav-item {{ request()->routeIs(['logs.*']) ? 'active' : '' }}">
+                        <a data-bs-toggle="collapse" href="#logs">
+                            <i class="fas fa-file-alt"></i>
+                            <p>Logs</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="logs">
+                            <ul class="nav nav-collapse ">
+                                @can('logs.view')
+                                    <li class="{{ request()->routeIs('user.logs.activity') ? 'active' : '' }}">
+                                        <a href="{{ route('user.logs.activity') }}">
+                                            <span class="sub-item">Activity Logs</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ request()->routeIs('user.logs.errors') ? 'active' : '' }}">
+                                        <a href="{{ route('user.logs.errors') }}">
+                                            <span class="sub-item">Error Logs</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
+
+                @endcanany
+
             </ul>
         </div>
     </div>
