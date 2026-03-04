@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'activity-logs' => \App\Http\Middleware\ActivityLogMiddleware::class,
+            'single.device' => \App\Http\Middleware\SingleDeviceLogin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

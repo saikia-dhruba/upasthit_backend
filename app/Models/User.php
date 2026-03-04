@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasRoles,SoftDeletes;
@@ -19,11 +20,13 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $guarded = ['id'];
     protected $fillable = [
         'name',
         'email',
         'password',
         'registration_type',
+        'current_jwt_session',
         'username' ,
         'phone',
         'address' ,
@@ -50,6 +53,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+        ];
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    // 2. Return a key value array, containing any custom claims to be added to the JWT.
+    public function getJWTCustomClaims()
+    {
+        return [
+            // Inject the database session ID into the token payload
+            'session_id' => $this->current_jwt_session
         ];
     }
 }

@@ -10,10 +10,13 @@ class Company extends Model
     use SoftDeletes;
 
 
-    
+
     protected $fillable = [
         'owner_id',
         'company_name',
+        'employee_count',
+        'company_code',
+        'company_logo',
         'industry_type',
         'gps_geofence_data',
     ];

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Company\CompanyController;
 use App\Http\Controllers\Api\Registration\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,5 +15,20 @@ Route::get('test', function () {
 
 
 Route::prefix('registration')->group(function () {
-    Route::post('chaeck-phone-email',[RegistrationController::class,'checkPhoneEmail']);
+    Route::post('check-phone-email',[RegistrationController::class,'checkPhoneEmail']);
+    Route::post('verify-otp',[RegistrationController::class,'verifyOtp']);
+    Route::post('/register-company',[RegistrationController::class,'registerCompany']);
+});
+
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:api','single.device'])->group(function () {
+
+    // The Logout Route
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::prefix('company')->group(function () {
+        Route::get('/my-companies', [CompanyController::class, 'getMyCompanies']);
+        Route::post('/switch-firm', [CompanyController::class, 'switchCompany']);
+    });
 });

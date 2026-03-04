@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('owner_id');
+            $table->string('company_code')->unique();
             $table->string('company_name');
             $table->string('company_logo')->nullable();
             $table->string('employee_code_start_with')->nullable();
+            $table->integer('employee_count')->nullable();
             $table->string('industry_type')->nullable();
             $table->json('gps_geofence_data')->nullable();
             $table->enum('status', ['ACTIVE', 'INACTIVE','LOCKED','DELETED','EXPIRED'])->default('ACTIVE');

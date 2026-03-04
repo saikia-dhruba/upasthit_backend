@@ -10,6 +10,12 @@ use App\Models\PayrollConfiguration;
 class EmployeeProfile extends Model
 {
     use SoftDeletes;
+    protected $fillable = [
+        'user_id',
+        'company_id',
+        'employee_category_id',
+        'designation',
+    ];
 
     /**
      * Categories for which this profile is a manager.
