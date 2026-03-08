@@ -33,6 +33,7 @@ return new class extends Migration
             // 4. Operational Toggles
             $table->boolean('is_overnight_shift')->default(false);
             $table->boolean('auto_punch_out')->default(false);
+            $table->time('auto_punch_out_time')->nullable();
             $table->boolean('has_minimum_working_hours')->default(false);
             $table->time('minimum_working_hours_for_present')->nullable(); // e.g., '08:00:00'
             $table->time('minimum_working_hours_for_half_day')->nullable(); // e.g., '04:00:00'

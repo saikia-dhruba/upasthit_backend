@@ -31,14 +31,11 @@ class CompanyShift extends Model
 
     public function company()
     {
-        // A shift belongs to one specific company
         return $this->belongsTo(Company::class);
     }
 
     public function employees()
     {
-        // Employees assigned to this specific shift
-        // (Assuming you add a 'shift_id' foreign key to the employee_profiles table)
         return $this->hasMany(EmployeeProfile::class, 'selected_shift', 'id');
     }
 }

@@ -12,13 +12,23 @@ class Company extends Model
 
 
     protected $fillable = [
-        'owner_id',
         'company_name',
-        'employee_count',
         'company_code',
-        'company_logo',
+        'employee_code_start_with',
+        'employee_count',
         'industry_type',
+        'gstin',
+        'phone_number',
+        'email',
+        'address',
+        'is_geo_fenced',
         'gps_geofence_data',
+        'pay_period',
+        'enable_shift_wise_incentives',
+        'enable_payroll_cycle',
+        'payroll_cycle_start_day',
+        'payroll_cycle_end_day',
+        'company_logo' // <-- Make sure logo is here!
     ];
 
     protected $casts = [
@@ -30,10 +40,13 @@ class Company extends Model
         return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
-    // public function employees()
-    // {
-    //     // Has many employees, linked by 'company_id' on the employee profile table
-    //     // matching the 'id' on this company table.
-    //     return $this->hasMany(EmployeeProfile::class, 'company_id', 'id');
-    // }
+    public function employees()
+    {
+        return $this->hasMany(EmployeeProfile::class, 'company_id');
+    }
+
+    public function shifts()
+    {
+        return $this->hasMany(CompanyShift::class, 'company_id');
+    }
 }
