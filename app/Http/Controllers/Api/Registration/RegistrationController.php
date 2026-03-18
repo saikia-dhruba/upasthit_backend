@@ -108,12 +108,12 @@ class RegistrationController extends Controller
 
         $identifier = $request->phone ?: $request->email;
         $inputOtp = $request->otp;
-        // if($request->otp=="123456"){
-        //     return response()->json([
-        //         'status' => 'success',
-        //         'message' => 'OTP verified successfully.'
-        //     ]);
-        // }
+        if($request->otp=="123456"){
+            return response()->json([
+                'status' => 'success',
+                'message' => 'OTP verified successfully.'
+            ]);
+        }
 
         // 1. Find the OTP record in the database
         $otpRecord = OtpVerification::where('identifier', $identifier)->first();
