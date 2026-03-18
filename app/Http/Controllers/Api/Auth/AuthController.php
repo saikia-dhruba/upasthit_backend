@@ -31,6 +31,9 @@ class AuthController extends Controller
         $user->current_jwt_session = Str::random(60);
         $user->save();
         $company_details = Company::select('id','company_code','company_name','company_logo','owner_id','is_default')->where('owner_id', $user->id)->where('is_default', true)->first();
+        if ($company_details && $company_details->company_logo) {
+            $company_details->company_logo = asset('storage/' . $company_details->company_logo);
+        }
 
         // 2. Generate the token (This will now include the NEW session_id in its payload)
         $token = auth('api')->login($user);

@@ -37,7 +37,7 @@ return new class extends Migration
             // 5. Attendance Type
             $table->enum('attendance_type', ['ON_ATTENDANCE', 'FLAT_RATE'])->default('ON_ATTENDANCE');
 
-            $table->string('applicable_months_years')->nullable(); // e.g., "JAN-2024, FEB-2024" or "ALL"
+            $table->json('applicable_months_years')->nullable(); // e.g., "JAN-2024, FEB-2024" or "ALL"
 
             $table->timestamps();
             $table->softDeletes(); // Enables soft deletes

@@ -3,8 +3,11 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\UserController;
 use App\Http\Controllers\Api\Company\CompanyController;
+use App\Http\Controllers\Api\Company\EmployeeManagementController;
+use App\Http\Controllers\Api\Company\PayrollConfigurationController;
 use App\Http\Controllers\Api\Company\ShiftController;
 use App\Http\Controllers\Api\Registration\RegistrationController;
+use App\Http\Controllers\Api\Company\PayrollTemplateController;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -18,9 +21,9 @@ Route::get('test', function () {
 
 
 Route::prefix('registration')->group(function () {
-    Route::post('check-phone-email',[RegistrationController::class,'checkPhoneEmail']);
-    Route::post('verify-otp',[RegistrationController::class,'verifyOtp']);
-    Route::post('/register-company',[RegistrationController::class,'registerCompany']);
+    Route::post('check-phone-email', [RegistrationController::class, 'checkPhoneEmail']);
+    Route::post('verify-otp', [RegistrationController::class, 'verifyOtp']);
+    Route::post('/register-company', [RegistrationController::class, 'registerCompany']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -45,6 +48,28 @@ Route::middleware([ForceJsonResponse::class, 'auth:api', 'single.device'])->grou
         Route::prefix('{companyId}/shifts')->group(function () {
             Route::get('/', [ShiftController::class, 'getCompanyShifts']);
             Route::post('/', [ShiftController::class, 'addShift']);
+        });
+
+        Route::prefix('{companyId}/payroll-config')->group(function () {
+            Route::get('/', [PayrollConfigurationController::class, 'index']);
+            Route::post('/store', [PayrollConfigurationController::class, 'store']);
+            Route::post('/{id}/update', [PayrollConfigurationController::class, 'update']);
+            Route::delete('/{id}/delete', [PayrollConfigurationController::class, 'destroy']);
+        });
+
+        Route::prefix('{companyId}/payroll-templates')->group(function () {
+            Route::get('/', [PayrollTemplateController::class, 'index']);
+            Route::post('/store', [PayRollTemplateController::class, 'store']);
+            Route::post('/{id}/update', [PayRollTemplateController::class, 'update']);
+            Route::delete('/{id}/delete', [PayRollTemplateController::class, 'destroy']);
+        });
+
+        Route::prefix('{companyId}')->group(function () {
+            Route::get('/generate-emp-code', [EmployeeManagementController::class, 'generateEmployeeCode']);
+            Route::get('/employees', [EmployeeManagementController::class, 'getEmployees']);
+            Route::get('/employee-categories', [EmployeeManagementController::class, 'getEmployeeCategories']);
+            Route::post('/employees/store', [EmployeeManagementController::class, 'store']);
+
         });
     });
 });

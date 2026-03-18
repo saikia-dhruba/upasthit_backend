@@ -18,14 +18,16 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
 
             // 1. Template Name
-            $table->string('template_name'); // e.g., "Standard Executive Package", "Intern Stipend"
+            $table->string('template_name'); // e.g., "Standard Executive Package"
 
             // 2. Salary Type
             $table->enum('basic_salary_type', ['FIXED', 'PERCENTAGE'])->default('PERCENTAGE');
 
-            // 3. Value/Percentage (If PERCENTAGE, this is % of CTC. If FIXED, this is a flat amount)
+            // 3. Value/Percentage
             $table->decimal('basic_salary_value', 10, 2);
 
+            // 4. NEW: Store the IDs of the selected Benefits & Deductions
+            $table->json('assigned_configurations')->nullable();
 
             $table->timestamps();
             $table->softDeletes(); // Enables soft deletes
@@ -38,11 +40,9 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pay_roll_templates');
+        // Fixed typo here! (was pay_roll_templates)
+        Schema::dropIfExists('payroll_templates');
     }
 };

@@ -108,9 +108,16 @@ class RegistrationController extends Controller
 
         $identifier = $request->phone ?: $request->email;
         $inputOtp = $request->otp;
+        // if($request->otp=="123456"){
+        //     return response()->json([
+        //         'status' => 'success',
+        //         'message' => 'OTP verified successfully.'
+        //     ]);
+        // }
 
         // 1. Find the OTP record in the database
         $otpRecord = OtpVerification::where('identifier', $identifier)->first();
+
 
         // 2. Check if record exists
         if (!$otpRecord) {
@@ -174,11 +181,11 @@ class RegistrationController extends Controller
 
             // A. Create the User (The Business Owner)
             $user = User::create([
-                'username'          => $request->email, // Assuming username is the email
-                'name'         => trim($request->first_name . ' ' . $request->last_name),
-                'email'             => $request->email,
+                'username'   => $request->email, // Assuming username is the email
+                'name'       => trim($request->first_name . ' ' . $request->last_name),
+                'email'      => $request->email,
                 'phone'      => $request->phone_number,
-                'password'          => Hash::make($request->password), // Securely hash the password
+                'password'   => Hash::make($request->password), // Securely hash the password
                 'registration_type' => 'OWNER',
             ]);
             if(!Company::where('owner_id', $user->id)->exists()){
@@ -186,13 +193,13 @@ class RegistrationController extends Controller
             }
 
             // B. Create the Company linked to this User
-            $company = Company::create([
-                'owner_id'       => $user->id,
-                'company_name'   => $request->business_name,
-                'employee_count' => $request->employee_count,
-                'company_code'   => strtoupper(substr($request->business_name, 0, 3)) . '-' . rand(1000, 9999), // Simple unique code generation
-                'is_default'     => $is_default ?? false,
-                ]);
+            $company = new Company();
+            $company->owner_id = $user->id;
+            $company->company_name = $request->business_name;
+            $company->employee_count = $request->employee_count;
+            $company->company_code = strtoupper(substr($request->business_name, 0, 3)) . '-' . rand(1000, 9999); // Simple unique code generation
+            $company->is_default = $is_default ?? false;
+            $company->save();
 
             // C. Create an Employee Profile for the Owner
             // This is crucial so the owner can act as an Admin/Manager within their own HR system
@@ -221,6 +228,7 @@ class RegistrationController extends Controller
                     'user_id'      => $user->id,
                     'company_id'   => $company->id,
                     'company_name' => $company->company_name,
+                    'company_details' => $company, // Assuming you have a company_logo field
                     'access_token' => $token,
                     'token_type'   => 'bearer',
                 ]
@@ -229,7 +237,7 @@ class RegistrationController extends Controller
             DB::rollBack(); // Something failed, undo all database changes
 
             // Log the error for your own debugging
-            Log::error('Company Registration Failed: ' . $e->getMessage());
+            Log::error('Company Registration Failed: ' . $e);
 
             return response()->json([
                 'status'  => 'error',

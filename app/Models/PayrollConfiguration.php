@@ -17,7 +17,8 @@ class PayrollConfiguration extends Model
     protected $casts = [
         'fixed_amount' => 'decimal:2',
         'percentage_value' => 'decimal:2',
-        'percentage_of_heads' => 'array', // Automatically casts JSON to PHP Array
+        'percentage_of_heads' => 'array',
+        'applicable_months_years' => 'array', 
     ];
 
     /**

@@ -9,12 +9,70 @@ use App\Models\PayrollConfiguration;
 
 class EmployeeProfile extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $fillable = [
         'user_id',
         'company_id',
-        'employee_category_id',
+        'birth_date',
+        'gender',
+        'address',
+        'emergency_contact_name',
+        'emergency_contact_number',
+        'employee_code',
+        'role_type',
         'designation',
+        'department',
+        'employee_category_id',
+        'date_of_joining',
+        'reports_to_id',
+        'wage_type',
+        'salary',
+        'payroll_template_id',
+        'payroll_config',
+        'allow_self_custom_salary',
+        'can_view_self_salry',
+        'applicable_for_overtime',
+        'overtime_start_after',
+        'overtime_hourly_rate',
+        'week_off_extra_payment',
+        'week_off_day',
+        'shiftwise_attendance',
+        'shift_alignment_type',
+        'assigned_shifts',
+        'casual_leaves',
+        'sick_leaves',
+        'privilege_leaves',
+        'emergency_leaves',
+        'pan_number',
+        'aadhar_number',
+        'uan_number',
+        'pf_number',
+        'esi_number',
+        'documents_urls',
+        'bank_name',
+        'bank_branch_name',
+        'bank_account_holder_name',
+        'bank_account_number',
+        'bank_ifsc_code',
+        'punch_location_rule',
+        'allow_multiple_attendance',
+        'allow_live_tracking',
+        'allow_mobile_attendance',
+        'require_ai_selfie_verification',
+        'ai_reference_face_image_urls',
+        'allow_self_odometer_reading',
+        'is_archived',
+
+    ];
+
+
+    protected $casts = [
+        'payroll_config' => 'array',
+        'documents_urls' => 'array',
+        'assigned_shifts' => 'array',
+        'ai_reference_face_image_urls' => 'array',
+        'birth_date' => 'date',
+        'date_of_joining' => 'date',
     ];
 
     /**
@@ -29,6 +87,11 @@ class EmployeeProfile extends Model
             'employee_category_id'
         );
     }
+
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 
     /**
      * Category this employee belongs to.

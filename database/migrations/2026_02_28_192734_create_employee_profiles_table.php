@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('company_id');
+
             // --- 1. Basic & Identity Info ---
-            // Note: Profile Image, Name, Phone, Email, and Password should be in the 'users' table.
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['MALE', 'FEMALE', 'OTHER'])->nullable();
             $table->text('address')->nullable();
@@ -24,36 +24,33 @@ return new class extends Migration
             $table->string('emergency_contact_number')->nullable();
 
             // --- 2. Job & Department Details ---
-            $table->string('employee_code')->nullable();
+            $table->string('employee_code')->nullable()->unique();
             $table->enum('role_type', ['EMPLOYEE', 'MANAGER', 'ADMIN'])->default('EMPLOYEE');
             $table->string('designation')->nullable();
             $table->string('department')->nullable();
-            $table->string('category')->nullable(); // e.g., Skilled, Unskilled, Permanent, Contract
+            $table->string('category')->nullable();
             $table->date('date_of_joining')->nullable();
-
-            // Self-referencing Foreign Key for "Report To"
             $table->unsignedBigInteger('reports_to_id')->nullable();
 
             // --- 3. Salary & Payroll Config ---
             $table->enum('wage_type', ['MONTHLY', 'DAILY', 'HOURLY'])->default('MONTHLY');
             $table->decimal('salary', 10, 2)->default(0.00);
-            $table->string('payroll_template')->nullable();
-            $table->json('payroll_config')->nullable(); // Store custom config as JSON
+            $table->unsignedBigInteger('payroll_template_id')->nullable(); // Changed to ID for better relational mapping
+            $table->json('payroll_config')->nullable();
             $table->boolean('allow_self_custom_salary')->default(false);
             $table->boolean('can_view_self_salary')->default(true);
 
             // --- 4. Overtime & Weekly Offs ---
             $table->boolean('applicable_for_overtime')->default(false);
-            $table->time('overtime_start_after')->nullable(); // e.g., '09:00:00' (after 9 hours)
-            // $table->string('overtime_calculation_display')->nullable();
+            $table->time('overtime_start_after')->nullable();
             $table->decimal('overtime_hourly_rate', 8, 2)->default(0.00);
             $table->boolean('week_off_extra_payment')->default(false);
-            $table->enum('week_off_day', ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'])->nullable(); // e.g., 'SUNDAY'
+            $table->enum('week_off_day', ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'])->nullable();
 
             // --- 5. Shift & Attendance Setup ---
             $table->boolean('shiftwise_attendance')->default(false);
             $table->enum('shift_alignment_type', ['FIXED', 'WEEKLY', 'MONTHLY'])->default('FIXED');
-            $table->unsignedBigInteger('shift_id')->nullable();
+            $table->json('assigned_shifts')->nullable(); // CHANGED: JSON handles complex Weekly/Monthly mapping
 
             // --- 6. Leave Quotas ---
             $table->integer('casual_leaves')->default(0);
@@ -67,7 +64,7 @@ return new class extends Migration
             $table->string('uan_number')->nullable();
             $table->string('pf_number')->nullable();
             $table->string('esi_number')->nullable();
-            $table->json('documents_urls')->nullable(); // Store multiple doc links as JSON
+            $table->json('documents_urls')->nullable();
 
             // --- 8. Bank Account Details ---
             $table->string('bank_name')->nullable();
@@ -82,18 +79,18 @@ return new class extends Migration
             $table->boolean('allow_live_tracking')->default(false);
             $table->boolean('allow_mobile_attendance')->default(true);
             $table->boolean('require_ai_selfie_verification')->default(false);
-            $table->string('ai_reference_face_image_url')->nullable();
+            $table->json('ai_reference_face_image_urls')->nullable(); // CHANGED: Multiple Selfies (JSON array)
             $table->boolean('allow_self_odometer_reading')->default(false);
 
             // --- 10. System Status ---
-            $table->boolean('is_archived')->default(false); // Used instead of deleting data
+            $table->boolean('is_archived')->default(false);
+            $table->softDeletes(); // For soft deletion of employee profiles
             $table->timestamps();
 
             // --- Foreign Key Constraints ---
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('reports_to_id')->references('id')->on('employee_profiles')->onDelete('set null');
-            $table->foreign('shift_id')->references('id')->on('company_shifts')->onDelete('set null');
         });
     }
 

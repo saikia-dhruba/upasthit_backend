@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\EmployeeProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\JWT;
 
 class CompanyController extends Controller
 {
@@ -28,6 +31,21 @@ class CompanyController extends Controller
                     'is_default',
                     'created_at'
                 ]); // Only selecting the fields the frontend actually needs
+
+
+
+            $companies = $companies->map(function ($company) {
+                if ($company->company_logo) {
+                    $company->company_logo = asset('storage/' . $company->company_logo);
+                }
+                return $company;
+            });
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Companies retrieved successfully.',
+                'data'    => $companies
+            ], 200);
 
             // 3. Return the data
             return response()->json([
@@ -91,16 +109,26 @@ class CompanyController extends Controller
         ]);
 
         try {
-            $userId = auth('api')->id();
+            $user = JWTAuth::user();
 
             // Create the new company
             $company = Company::create([
                 'company_name'  => $request->company_name,
                 'industry_type' => $request->industry_type,
                 'employee_count' => $request->employee_count,
-                'owner_id'      => $userId,
+                'owner_id'      => $user->id,
                 'company_code'   => strtoupper(substr($request->company_name, 0, 3)) . '-' . rand(1000, 9999),
                 'is_default'    => false, // New companies are not default by default
+            ]);
+
+            EmployeeProfile::create([
+                'user_id'         => $user->id,
+                'company_id'      => $company->id,
+                'designation'     => "Owner", // Default designation for the creator
+                'role_type'       => 'ADMIN', // Set them as the system admin
+                'wage_type'       => 'MONTHLY',
+                'date_of_joining' => now(),
+                'is_active'       => true,
             ]);
 
             return response()->json([
@@ -249,6 +277,16 @@ class CompanyController extends Controller
                 'payroll_cycle_start_day' => ($validated['enable_payroll_cycle'] ?? false) ? $validated['payroll_cycle_start_day'] : null,
                 'payroll_cycle_end_day' => ($validated['enable_payroll_cycle'] ?? false) ? $validated['payroll_cycle_end_day'] : null,
             ]);
+
+            if ($company && $company->company_logo) {
+                $company->company_logo = asset('storage/' . $company->company_logo);
+            }
+
+            $employee =EmployeeProfile::where('company_id', $companyId)->where('user_id', $userId)->first();
+
+            $employee->employee_code = $company->employee_code_start_with.'00001';
+            $employee->save();
+
 
             return response()->json(['status' => 'success', 'message' => 'Updated successfully.', 'data' => $company], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
