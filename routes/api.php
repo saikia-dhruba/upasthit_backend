@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\UserController;
 use App\Http\Controllers\Api\Company\CompanyController;
@@ -69,7 +70,15 @@ Route::middleware([ForceJsonResponse::class, 'auth:api', 'single.device'])->grou
             Route::get('/employees', [EmployeeManagementController::class, 'getEmployees']);
             Route::get('/employee-categories', [EmployeeManagementController::class, 'getEmployeeCategories']);
             Route::post('/employees/store', [EmployeeManagementController::class, 'store']);
-
+            Route::get('/employees/{employeeId}', [EmployeeManagementController::class, 'show']);
+            Route::put('/employees/{id}', [EmployeeManagementController::class, 'update']);
         });
+
+
     });
+
+    Route::prefix('attendance/{empId}')->group(function () {
+            Route::get('/settings', [AttendanceController::class, 'getSettings']);
+            Route::post('/punch', [AttendanceController::class, 'punch']);
+        });
 });

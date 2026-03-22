@@ -203,6 +203,8 @@ class RegistrationController extends Controller
 
             // C. Create an Employee Profile for the Owner
             // This is crucial so the owner can act as an Admin/Manager within their own HR system
+            $prefix = Company::find($company->id)->employee_code_start_with ?? 'EMP-';
+            $newCode = $prefix . '00001';
             EmployeeProfile::create([
                 'user_id'         => $user->id,
                 'company_id'      => $company->id,
@@ -211,6 +213,7 @@ class RegistrationController extends Controller
                 'wage_type'       => 'MONTHLY',
                 'date_of_joining' => now(),
                 'is_active'       => true,
+                'employee_code'    => $newCode, // Simple unique code generation
             ]);
 
             DB::commit(); // Everything succeeded, save to database

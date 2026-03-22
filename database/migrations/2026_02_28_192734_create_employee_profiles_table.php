@@ -17,11 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
 
             // --- 1. Basic & Identity Info ---
-            $table->date('birth_date')->nullable();
-            $table->enum('gender', ['MALE', 'FEMALE', 'OTHER'])->nullable();
-            $table->text('address')->nullable();
-            $table->string('emergency_contact_name')->nullable();
-            $table->string('emergency_contact_number')->nullable();
+            
 
             // --- 2. Job & Department Details ---
             $table->string('employee_code')->nullable()->unique();
@@ -59,12 +55,7 @@ return new class extends Migration
             $table->integer('emergency_leaves')->default(0);
 
             // --- 7. Statutory & Compliance Documents ---
-            $table->string('pan_number')->nullable();
-            $table->string('aadhar_number')->nullable();
-            $table->string('uan_number')->nullable();
-            $table->string('pf_number')->nullable();
-            $table->string('esi_number')->nullable();
-            $table->json('documents_urls')->nullable();
+
 
             // --- 8. Bank Account Details ---
             $table->string('bank_name')->nullable();
@@ -79,7 +70,7 @@ return new class extends Migration
             $table->boolean('allow_live_tracking')->default(false);
             $table->boolean('allow_mobile_attendance')->default(true);
             $table->boolean('require_ai_selfie_verification')->default(false);
-            $table->json('ai_reference_face_image_urls')->nullable(); // CHANGED: Multiple Selfies (JSON array)
+             // CHANGED: Multiple Selfies (JSON array)
             $table->boolean('allow_self_odometer_reading')->default(false);
 
             // --- 10. System Status ---

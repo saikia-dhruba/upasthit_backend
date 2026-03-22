@@ -31,6 +31,18 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'address' ,
         'avatar' ,
+        'birth_date',
+        'gender',
+        'address',
+        'emergency_contact_name',
+        'emergency_contact_number',
+        'pan_number',
+        'aadhar_number',
+        'uan_number',
+        'pf_number',
+        'esi_number',
+        'documents_urls',
+        'ai_reference_face_image_urls',
     ];
 
     /**

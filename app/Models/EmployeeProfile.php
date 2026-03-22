@@ -43,12 +43,7 @@ class EmployeeProfile extends Model
         'sick_leaves',
         'privilege_leaves',
         'emergency_leaves',
-        'pan_number',
-        'aadhar_number',
-        'uan_number',
-        'pf_number',
-        'esi_number',
-        'documents_urls',
+
         'bank_name',
         'bank_branch_name',
         'bank_account_holder_name',
@@ -59,7 +54,7 @@ class EmployeeProfile extends Model
         'allow_live_tracking',
         'allow_mobile_attendance',
         'require_ai_selfie_verification',
-        'ai_reference_face_image_urls',
+
         'allow_self_odometer_reading',
         'is_archived',
 
@@ -100,6 +95,13 @@ class EmployeeProfile extends Model
     {
         return $this->belongsTo(EmployeeCategory::class, 'employee_category_id');
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+
 
     /**
      * Payroll configurations assigned to this employee.
