@@ -275,13 +275,16 @@
                         </span>
                         <h4 class="text-section">User Management</h4>
                     </li>
-                    <li class="nav-item {{ request()->routeIs(['users.*']) ? 'active' : '' }}">
+                    @php
+                        $isUserManagementActive = request()->routeIs('user.roles.*') || request()->routeIs('user.permissions.*') || request()->routeIs('user.users.*');
+                    @endphp
+                    <li class="nav-item {{ $isUserManagementActive ? 'active' : '' }}">
                         <a data-bs-toggle="collapse" href="#forms">
                             <i class="fas fa-users"></i>
                             <p>User Management</p>
                             <span class="caret"></span>
                         </a>
-                        <div class="collapse" id="forms">
+                        <div class="collapse {{ $isUserManagementActive ? 'show' : '' }}" id="forms">
                             <ul class="nav nav-collapse ">
                                 @can('roles.view')
                                     <li class="{{ request()->routeIs('user.roles.*') ? 'active' : '' }}">
@@ -311,13 +314,16 @@
 
                 {{-- LOGS --}}
                 @canany(['logs.view'])
-                    <li class="nav-item {{ request()->routeIs(['logs.*']) ? 'active' : '' }}">
+                    @php
+                        $isLogsActive = request()->routeIs('user.logs.*');
+                    @endphp
+                    <li class="nav-item {{ $isLogsActive ? 'active' : '' }}">
                         <a data-bs-toggle="collapse" href="#logs">
                             <i class="fas fa-file-alt"></i>
                             <p>Logs</p>
                             <span class="caret"></span>
                         </a>
-                        <div class="collapse" id="logs">
+                        <div class="collapse {{ $isLogsActive ? 'show' : '' }}" id="logs">
                             <ul class="nav nav-collapse ">
                                 @can('logs.view')
                                     <li class="{{ request()->routeIs('user.logs.activity') ? 'active' : '' }}">

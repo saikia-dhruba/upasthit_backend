@@ -361,6 +361,56 @@
 
             <div class="container">
                 <div class="page-inner">
+                    @php
+                        $routeName = request()->route()?->getName();
+                        $pageTitle = trim($__env->yieldContent('title', 'Dashboard'));
+                        $sectionTitle = null;
+
+                        if (request()->routeIs('user.roles.*') || request()->routeIs('user.permissions.*') || request()->routeIs('user.users.*')) {
+                            $sectionTitle = 'User Management';
+                        } elseif (request()->routeIs('user.logs.*')) {
+                            $sectionTitle = 'Logs';
+                        } elseif (request()->routeIs('user.analytics')) {
+                            $sectionTitle = 'Analytics';
+                        } elseif (request()->routeIs('user.dashboard')) {
+                            $sectionTitle = 'Dashboard';
+                        }
+
+                        $breadcrumbs = [
+                            ['label' => 'Dashboard', 'url' => route('user.dashboard')],
+                        ];
+
+                        if ($sectionTitle && $sectionTitle !== 'Dashboard' && $sectionTitle !== $pageTitle) {
+                            $breadcrumbs[] = ['label' => $sectionTitle, 'url' => null];
+                        }
+
+                        if ($pageTitle !== 'Dashboard' || !request()->routeIs('user.dashboard')) {
+                            $breadcrumbs[] = ['label' => $pageTitle, 'url' => null];
+                        }
+                    @endphp
+
+                    <div class="page-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center gap-3 pt-2 pb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ $pageTitle }}</h3>
+                            <ul class="breadcrumbs mb-0">
+                                @foreach ($breadcrumbs as $breadcrumb)
+                                    <li class="nav-home">
+                                        @if (!$loop->last && !empty($breadcrumb['url']))
+                                            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>
+                                        @else
+                                            <span>{{ $breadcrumb['label'] }}</span>
+                                        @endif
+                                    </li>
+                                    @if (!$loop->last)
+                                        <li class="separator">
+                                            <i class="icon-arrow-right"></i>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
                     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                         {{-- <div>
                             <h3 class="fw-bold mb-3">Dashboard</h3>

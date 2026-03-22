@@ -23,8 +23,14 @@ Route::middleware('activity-logs')->group(function () {
             //DASHBOARD
             Route::get('dashboard', function () {
                 // We will create this view in the next step
-                return view('layouts.user');
+                // return view('layouts.user');
+                return view('admin.dashboard');
             })->name('dashboard');
+
+            // Analytics
+            Route::get('analytics', function () {
+                return view('admin.analytics');
+            })->name('analytics');
 
             // USER ROLES AND PERMISSION MANAGEMENT
             Route::prefix('management')->group(function () {
